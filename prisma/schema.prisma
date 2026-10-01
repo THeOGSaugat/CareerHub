@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+datasource db {
+  provider = "postgresql"
+}
+model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  password      String
+  name          String
+  role          Role     @default(SEEKER)
+  // seeker profile (all optional)
+  headline      String?
+  bio           String?
+  location      String?
+  experience    String?
+  education     String?
+  cvUrl         String?
+  jobs          Job[]
+  applications  Application[]
+  skills        Skill[]
+  savedJobs     SavedJob[]
+  notifications Notification[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+model Skill {
+  id        Int      @id @default(autoincrement())
+  name      String
+  //relation
+  userId    Int
+  user      User     @relation(fields:[userId], references:[id], onDelete: Cascade)
+  @@unique([userId, name])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Job {
+  id            Int         @id @default(autoincrement())
+  title         String
+  description   String
+  company       String
+  location      String
+  salary        Int
+  salaryMax     Int?
+  type          JobType     @default(FULL_TIME)
+  workMode      WorkMode    @default(ONSITE)
+  level         ExperienceLevel?
+  category      String      @default("Other")
+  skills        String[]    @default([])
+  deadline      DateTime?
+  status        JobStatus   @default(OPEN)
+  employerId    Int
+  employer      User        @relation(fields:[employerId], references:[id], onDelete: Cascade)
+  applications   Application[]
+  savedBy        SavedJob[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+model Application {
+  id                  Int                 @id @default(autoincrement())
+  status              ApplicationStatus   @default(PENDING)
+  cvUrl               String
+  coverLetter         String
+  yearsOfExperience   String
+  // private employer note, never shown to the seeker
+  note                String?
+  seekerId            Int
+  seeker              User                @relation(fields:[seekerId], references:[id], onDelete: Cascade)
+  jobId               Int
+  job                 Job                 @relation(fields:[jobId], references:[id], onDelete: Cascade)
+  @@unique([jobId, seekerId])
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+model SavedJob {
+  id        Int      @id @default(autoincrement())
+  seekerId  Int
+  seeker    User     @relation(fields:[seekerId], references:[id], onDelete: Cascade)
+  jobId     Int
+  job       Job      @relation(fields:[jobId], references:[id], onDelete: Cascade)
+  @@unique([seekerId, jobId])
+  createdAt DateTime @default(now())
+}
+model Notification {
+  id        Int      @id @default(autoincrement())
+  title     String
+  body      String
+  link      String?
+  read      Boolean  @default(false)
+  userId    Int
+  user      User     @relation(fields:[userId], references:[id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@index([userId, read])
+}
+// enums
+enum Role {
+  SEEKER
+  EMPLOYER
+}
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  INTERNSHIP
+  CONTRACT
+}
+enum WorkMode {
+  ONSITE
+  REMOTE
+  HYBRID
+}
+enum ExperienceLevel {
+  ENTRY
+  MID
+  SENIOR
+}
+enum JobStatus {
+  OPEN
+  CLOSED
+}
+// Hiring pipeline: PENDING (applied) -> REVIEWED -> SHORTLISTED -> INTERVIEW -> OFFER -> APPROVED (hired), or DECLINED
+enum ApplicationStatus {
+  APPROVED
+  PENDING
+  DECLINED
+  REVIEWED
+  SHORTLISTED
+  INTERVIEW
+  OFFER
+}

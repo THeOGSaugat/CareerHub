@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+/* ─── CareerHub Global Styles ────────────────────────────────── */
+/* One light theme built on four brand colours:
+     Navy Blue     #081C2D  → ink   (headings, text, dark surfaces)
+     Emerald Green #1F7A63  → brand (actions, links, highlights)
+     Soft White    #F5F7FA  → mist  (page background)
+     Cool Gray     #9AA3A8  → cool  (placeholders, icons, hover borders)
+   Shared pieces live in src/components/ui — prefer those over one-off classes. */
+
+@theme {
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --color-ink: #081c2d;
+  --color-mist: #f5f7fa;
+  --color-cool: #9aa3a8;
+
+  /* Emerald scale around the brand colour (500) */
+  --color-brand-50: #eef6f3;
+  --color-brand-100: #dcede6;
+  --color-brand-200: #bcdccf;
+  --color-brand-300: #8cc3b0;
+  --color-brand-400: #4f9d86;
+  --color-brand-500: #1f7a63;
+  --color-brand-600: #1a6955;
+  --color-brand-700: #155646;
+
+  /* Cool Gray is too light for body text on white, so text uses darker steps */
+  --color-steel: #55626b;
+  --color-muted: #717d85;
+  --color-line: #e2e7ec;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-mist);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: rgba(31, 122, 99, 0.22);
+}
+
+/* ─── Smooth page transitions ──────────────────────────────── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* ─── Scale in animation (modals, toasts) ──────────────────── */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out;
+}
+
+/* ─── Gentle float (hero badges) ───────────────────────────── */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float 7s ease-in-out 1s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-fade-in,
+  .animate-scale-in,
+  .animate-float,
+  .animate-float-slow {
+    animation: none;
+  }
+}
+
+/* ─── Soft brand backdrop (auth pages) ─────────────────────── */
+.hero-glow {
+  background:
+    radial-gradient(60% 55% at 50% 0%, rgba(31, 122, 99, 0.12), transparent 70%),
+    radial-gradient(40% 40% at 85% 10%, rgba(31, 122, 99, 0.08), transparent 70%);
+}
+
+/* ─── Horizontal scrollers without a visible scrollbar ─────── */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Smooth focus ring ────────────────────────────────────── */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(31, 122, 99, 0.18);
+}
+
+/* ─── Scrollbar styling ────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-mist);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c9d0d5;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cool);
+}
